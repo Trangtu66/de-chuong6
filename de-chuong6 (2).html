@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Đề kiểm tra Chương 6 — Xác suất có điều kiện</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F8F9FA; --paper-line:#DAD6C8; --ink:#1E293B; --ink-soft:#55655C;
+    --teal:#4F7566; --teal-deep:#33473D; --amber:#B98B2E; --good:#5C7A4E; --bad:#A8402F;
+    --card:#FFFEFA; --radius:14px; --shadow:0 4px 18px rgba(15,107,92,0.10);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--paper);
+    color:var(--ink); font-family:'IBM Plex Sans', sans-serif;
+    min-height:100vh; line-height:1.55;
+  }
+  .wrap{max-width:900px;margin:0 auto;padding:28px 18px 80px;}
+  h1,h2,h3{font-family:'Fraunces', serif;font-weight:600;margin:0;}
+  .eyebrow{font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--teal);font-weight:600;}
+  a{color:var(--teal-deep);} button{font-family:inherit;cursor:pointer;}
+  :focus-visible{outline:3px solid var(--amber);outline-offset:2px;}
+
+  header.top{background:var(--teal);color:#E9EDE0;border-radius:var(--radius);padding:22px 26px;margin-bottom:22px;box-shadow:var(--shadow);position:relative;overflow:hidden;}
+  
+  header.top h1{font-size:24px;color:#fff;position:relative;}
+  header.top p{margin:6px 0 0;color:#DCE6D8;font-size:14px;position:relative;}
+
+  .card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:22px 24px;margin-bottom:18px;border:1px solid #E3DFD0;}
+  .brief-table{width:100%;border-collapse:collapse;margin-top:14px;font-size:14.5px;}
+  .brief-table td{padding:8px 4px;border-bottom:1px dashed var(--paper-line);}
+  .brief-table td:first-child{color:var(--ink-soft);width:42%;}
+  .brief-table td:last-child{font-weight:600;color:var(--teal-deep);}
+  .name-field{margin-top:16px;}
+  .name-field label{display:block;font-size:13px;color:var(--ink-soft);margin-bottom:6px;}
+  .name-field label .req{color:var(--bad);font-weight:700;}
+  .name-field input{width:100%;padding:11px 13px;border:1.5px solid var(--paper-line);border-radius:8px;font-size:15px;font-family:inherit;background:#FAF9F1;}
+  .name-field input.error{border-color:var(--bad);background:#F7EBE7;}
+  .field-error{color:var(--bad);font-size:12.5px;margin-top:6px;display:none;}
+  .field-error.show{display:block;}
+  .btn-primary{background:var(--teal);color:#fff;border:none;border-radius:9px;padding:13px 22px;font-size:15.5px;font-weight:600;margin-top:18px;display:inline-flex;align-items:center;gap:8px;transition:background .15s, transform .1s;}
+  .btn-primary:hover{background:var(--teal-deep);} .btn-primary:active{transform:scale(.98);}
+  .btn-ghost{background:transparent;border:1.5px solid var(--teal);color:var(--teal-deep);border-radius:9px;padding:9px 16px;font-weight:600;font-size:13.5px;}
+  .btn-ghost:hover{background:#EAF0E4;}
+
+  .quiz-header{position:sticky;top:0;z-index:20;background:var(--paper);padding-top:10px;padding-bottom:10px;}
+  .quiz-bar{display:flex;align-items:center;justify-content:space-between;background:var(--card);border-radius:12px;padding:10px 16px;box-shadow:var(--shadow);border:1px solid #E3DFD0;flex-wrap:wrap;gap:8px;}
+  .timer{font-family:'IBM Plex Mono',monospace;font-size:20px;font-weight:600;color:var(--teal-deep);display:flex;align-items:center;gap:6px;}
+  .timer.low{color:var(--bad);}
+  .jumpnav{display:flex;gap:6px;flex-wrap:wrap;}
+  .jumpnav button{border:1.5px solid var(--paper-line);background:#fff;border-radius:7px;padding:6px 12px;font-size:12.5px;font-weight:600;color:var(--ink-soft);}
+  .progress{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--ink-soft);}
+
+  .part-header{background:var(--teal-deep);color:#fff;border-radius:10px;padding:12px 18px;margin:22px 0 14px;font-family:'Fraunces',serif;font-weight:600;font-size:16px;}
+  .part-note{font-size:12.5px;color:var(--ink-soft);font-weight:400;margin-top:3px;font-family:'IBM Plex Sans',sans-serif;}
+
+  .q-tag{display:inline-block;font-family:'IBM Plex Mono',monospace;font-size:12px;background:#EAF0E4;color:var(--teal-deep);padding:4px 10px;border-radius:6px;margin-bottom:10px;font-weight:600;}
+  .q-content{font-size:15.5px;margin-bottom:14px;}
+
+  .mc-option{display:flex;align-items:flex-start;gap:10px;padding:9px 10px;border:1.5px solid var(--paper-line);border-radius:8px;margin-bottom:8px;cursor:pointer;background:#fff;}
+  .mc-option:hover{background:#F4F2E7;}
+  .mc-option.selected{border-color:var(--teal);background:#EAF0E4;}
+  .mc-option .opt-label{font-family:'IBM Plex Mono',monospace;font-weight:700;color:var(--teal);flex-shrink:0;}
+
+  .statement{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;padding:12px 4px;border-top:1px dashed var(--paper-line);}
+  .statement:first-of-type{border-top:none;}
+  .st-text{flex:1;font-size:14.5px;}
+  .st-label{font-family:'IBM Plex Mono',monospace;font-weight:700;color:var(--teal);margin-right:6px;}
+  .toggle{display:flex;gap:6px;flex-shrink:0;}
+  .toggle button{border:1.5px solid var(--paper-line);background:#fff;border-radius:7px;padding:7px 13px;font-size:13px;font-weight:600;color:var(--ink-soft);min-width:58px;}
+  .toggle button.sel-true{background:var(--teal);border-color:var(--teal);color:#fff;}
+  .toggle button.sel-false{background:var(--bad);border-color:var(--bad);color:#fff;}
+
+  .short-answer input{width:180px;padding:10px 12px;border:1.5px solid var(--paper-line);border-radius:8px;font-size:15px;font-family:'IBM Plex Mono',monospace;background:#FAF9F1;}
+  .short-answer input:focus{border-color:var(--teal);}
+  .short-answer .hint{font-size:12px;color:var(--ink-soft);margin-top:6px;}
+
+  .quiz-footer{display:flex;justify-content:center;margin-top:20px;}
+
+  .score-hero{text-align:center;background:var(--teal);color:#fff;border-radius:var(--radius);padding:28px 20px;margin-bottom:20px;box-shadow:var(--shadow);position:relative;overflow:hidden;}
+  
+  .score-hero .big{font-family:'IBM Plex Mono',monospace;font-size:52px;font-weight:600;position:relative;}
+  .score-hero .cap{position:relative;color:#DCE6D8;font-size:13px;letter-spacing:.08em;text-transform:uppercase;font-family:'IBM Plex Mono',monospace;}
+  .score-hero .stuname{position:relative;font-family:'Fraunces',serif;font-size:18px;margin-top:6px;}
+  .score-breakdown{position:relative;display:flex;justify-content:center;gap:22px;margin-top:14px;font-family:'IBM Plex Mono',monospace;font-size:12.5px;color:#DCE6D8;}
+  .save-status{position:relative;margin-top:14px;font-size:12.5px;color:#DCE6D8;background:rgba(255,255,255,.12);display:inline-block;padding:6px 14px;border-radius:20px;}
+  .rank-card{text-align:center;}
+
+  .review-q{border-radius:var(--radius);}
+  .review-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:8px;}
+  .qscore{font-family:'IBM Plex Mono',monospace;font-weight:700;color:var(--teal-deep);font-size:13px;background:#EAF0E4;padding:4px 10px;border-radius:6px;}
+  .mark{width:20px;height:20px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;font-weight:700;margin-top:1px;}
+  .mark.ok{background:var(--good);} .mark.no{background:var(--bad);}
+  .review-body .meta{font-size:12px;color:var(--ink-soft);margin-top:3px;}
+  .review-body .expl{font-size:12.5px;color:var(--teal-deep);margin-top:4px;background:#EFF0E2;border-radius:6px;padding:6px 9px;}
+  .review-mc-opt{padding:6px 4px;font-size:13.5px;}
+  .review-mc-opt.correct-ans{color:var(--good);font-weight:600;}
+  .review-mc-opt.wrong-selected{color:var(--bad);font-weight:600;text-decoration:line-through;}
+
+  footer.hint{text-align:center;font-size:12.5px;color:var(--ink-soft);margin-top:30px;}
+  .hidden{display:none !important;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="top">
+    <div class="eyebrow" style="color:#C9D9C0;">ĐỀ 1 · CHƯƠNG 6 · XÁC SUẤT CÓ ĐIỀU KIỆN</div>
+    <h1>Đề kiểm tra trực tuyến</h1>
+    <p>12 câu trắc nghiệm · 4 câu Đúng/Sai · 6 câu trả lời ngắn — đúng cấu trúc đề thi tốt nghiệp THPT</p>
+  </header>
+
+  <!-- ===================== SCREEN 1: LANDING ===================== -->
+  <section id="screen-landing">
+    <div class="card">
+      <span class="eyebrow">Thông tin đề kiểm tra</span>
+      <h2 style="margin-top:6px;">Đề cố định — 22 câu, 3 phần</h2>
+      <table class="brief-table">
+        <tr><td>Phần 1</td><td>12 câu trắc nghiệm 4 đáp án (0,25đ/câu = 3đ)</td></tr>
+        <tr><td>Phần 2</td><td>4 câu Đúng/Sai, mỗi câu 4 ý (thang 0,1–0,25–0,5–1,0đ = 4đ)</td></tr>
+        <tr><td>Phần 3</td><td>6 câu trả lời ngắn, điền đáp án số (0,5đ/câu = 3đ)</td></tr>
+        <tr><td>Thời gian làm bài</td><td>90 phút</td></tr>
+        <tr><td>Kết quả</td><td>Tự động lưu vào bảng xếp hạng chung sau khi nộp bài</td></tr>
+      </table>
+      <div class="name-field">
+        <label for="student-name">Họ tên thí sinh <span class="req">(bắt buộc)</span></label>
+        <input id="student-name" type="text" placeholder="Nhập họ tên của bạn...">
+        <div class="field-error" id="name-error">Vui lòng nhập họ tên trước khi bắt đầu làm bài.</div>
+      </div>
+      <button class="btn-primary" id="start-btn">▶ Bắt đầu làm bài</button>
+    </div>
+  </section>
+
+  <!-- ===================== SCREEN 2: QUIZ ===================== -->
+  <section id="screen-quiz" class="hidden">
+    <div class="quiz-header">
+      <div class="quiz-bar">
+        <div class="timer" id="timer">⏱ 90:00</div>
+        <div class="jumpnav">
+          <button data-jump="part1-header">Phần 1</button>
+          <button data-jump="part2-header">Phần 2</button>
+          <button data-jump="part3-header">Phần 3</button>
+        </div>
+        <div class="progress" id="progress-text">0/22 đã trả lời</div>
+      </div>
+    </div>
+
+    <div id="quiz-body"></div>
+
+    <div class="quiz-footer">
+      <button class="btn-primary" id="submit-btn">Nộp bài</button>
+    </div>
+  </section>
+
+  <!-- ===================== SCREEN 3: RESULTS ===================== -->
+  <section id="screen-results" class="hidden">
+    <div class="score-hero">
+      <div class="cap">Tổng điểm</div>
+      <div class="big"><span id="score-total">0.00</span><span style="font-size:24px;">/10</span></div>
+      <div class="stuname" id="score-name"></div>
+      <div class="score-breakdown" id="score-breakdown"></div>
+      <div class="cap" id="score-sub" style="margin-top:10px;"></div>
+      <div class="save-status" id="save-status">Đang lưu kết quả vào bảng xếp hạng...</div>
+    </div>
+    <div class="card rank-card">
+      <h3 style="margin-bottom:8px;">Xem bảng xếp hạng của lớp</h3>
+      <p style="color:var(--ink-soft);font-size:14px;margin:0 0 6px;">Điểm của bạn vừa được ghi nhận. Bấm nút dưới để xem toàn bộ bảng xếp hạng.</p>
+      <a class="btn-primary" id="rank-link" href="#" target="_blank" rel="noopener" style="text-decoration:none;">🏆 Xem bảng xếp hạng</a>
+    </div>
+    <div id="review-list"></div>
+  </section>
+
+  <footer class="hint">Xác suất có điều kiện · Chương 6 · Toán 12</footer>
+</div>
+
+<script>
+/* ================= CẤU HÌNH GHI KẾT QUẢ VÀO GOOGLE SHEET =================
+   Có thể dùng LẠI đúng 5 dòng bạn đã thiết lập cho đề kiểm tra trước (cùng cấu trúc
+   Họ tên / Điểm số / Chi tiết) để gộp chung 1 bảng xếp hạng, hoặc tạo Google Form mới
+   riêng cho đề này rồi dán 5 giá trị tương ứng vào đây. */
+const GOOGLE_FORM_ACTION_URL = "PASTE_GOOGLE_FORM_ACTION_URL_HERE";
+const ENTRY_NAME  = "PASTE_ENTRY_ID_HO_TEN_HERE";
+const ENTRY_SCORE = "PASTE_ENTRY_ID_DIEM_SO_HERE";
+const ENTRY_DETAIL = "PASTE_ENTRY_ID_CHI_TIET_HERE";
+const RANKING_SHEET_URL = "PASTE_LINK_GOOGLE_SHEET_DA_PUBLISH_HERE";
+
+/* ================= DỮ LIỆU ĐỀ (cố định, không random) ================= */
+const EXAM = {"part1": [{"id": 1, "content": "Cho hai biến cố A và B bất kì với P(B) &gt; 0. Khẳng định nào dưới đây đúng?", "options": [{"l": "A", "t": "P(A|B) = P(A∩B)/P(A)"}, {"l": "B", "t": "P(A|B) = P(A)/P(A∩B)"}, {"l": "C", "t": "P(A|B) = P(B)/P(A∩B)"}, {"l": "D", "t": "P(A|B) = P(A∩B)/P(B)"}], "correct": "D", "expl": "Với hai biến cố A và B bất kì với P(B)&gt;0, ta có P(A|B) = P(A∩B)/P(B)."}, {"id": 2, "content": "Cho hai biến cố A và B. Chọn mệnh đề đúng?", "options": [{"l": "A", "t": "P(A∩B) = P(B).P(B|A)"}, {"l": "B", "t": "P(A|B) = P(A|B̄)"}, {"l": "C", "t": "P(B) = P(B|Ā)"}, {"l": "D", "t": "P(A∩B) = P(A).P(B|A)"}], "correct": "D", "expl": "Ta có: P(A∩B) = P(A).P(B|A) = P(B).P(A|B)."}, {"id": 3, "content": "Cho hai biến cố A và B, công thức tính xác suất toàn phần là", "options": [{"l": "A", "t": "P(A) = P(B).P(A|B̄) + P(B̄).P(A|B)"}, {"l": "B", "t": "P(B) = P(A).P(A|B̄) + P(Ā).P(A|B)"}, {"l": "C", "t": "P(A) = P(B).P(A|B) + P(B̄).P(A|B̄)"}, {"l": "D", "t": "P(B) = P(Ā).P(A|B̄) + P(A).P(A|B)"}], "correct": "C", "expl": "Ta có: P(A) = P(B).P(A|B) + P(B̄).P(A|B̄)."}, {"id": 4, "content": "Cho hai biến cố A và B là hai biến cố ngẫu nhiên mà P(A) &gt; 0, P(B) &gt; 0, công thức Bayes là", "options": [{"l": "A", "t": "P(B|A) = P(B).P(A|B)/P(A)"}, {"l": "B", "t": "P(B|A) = P(A).P(A|B)/P(B)"}, {"l": "C", "t": "P(B|A) = P(B).P(B|A)/P(A)"}, {"l": "D", "t": "P(B|A) = P(A).P(B|A)/P(B)"}], "correct": "A", "expl": "Ta có: P(B|A) = P(B).P(A|B)/P(A)."}, {"id": 5, "content": "Cho hai biến cố A, B có P(B) = 0,8; P(A∩B) = 0,1. Kết quả của xác suất sau P(A|B) bằng bao nhiêu?", "options": [{"l": "A", "t": "1/6"}, {"l": "B", "t": "3/7"}, {"l": "C", "t": "3/5"}, {"l": "D", "t": "1/8"}], "correct": "D", "expl": "P(A|B) = P(A∩B)/P(B) = 0,1/0,8 = 1/8."}, {"id": 6, "content": "Cho hai biến cố A, B có P(A) = 7/15; P(AB) = 23/145. Kết quả của xác suất sau P(B|A) bằng bao nhiêu?", "options": [{"l": "A", "t": "69/203"}, {"l": "B", "t": "19/135"}, {"l": "C", "t": "9/23"}, {"l": "D", "t": "41/105"}], "correct": "A", "expl": "P(B|A) = P(AB)/P(A) = (23/145) : (7/15) = 69/203."}, {"id": 7, "content": "Một trường THPT có 600 học sinh, trong đó có 245 học sinh nam và 355 học sinh nữ. Tổng kết học kỳ I, có 170 học sinh đạt danh hiệu học sinh giỏi, trong đó có 80 học sinh nam và 90 học sinh nữ. Biết học sinh được chọn là nam, tính xác suất để học sinh đó đạt danh hiệu học sinh giỏi (làm tròn kết quả đến hàng phần trăm).", "options": [{"l": "A", "t": "5/19"}, {"l": "B", "t": "12/31"}, {"l": "C", "t": "11/45"}, {"l": "D", "t": "16/49"}], "correct": "D", "expl": "Gọi A: “học sinh đạt điểm giỏi”, B: “học sinh là nam”. P(A∩B)=80/600=2/15. P(B)=245/600=49/120. P(A|B)=P(A∩B)/P(B)=(2/15):(49/120)=16/49."}, {"id": 8, "content": "Trong một hộp kín có 10 viên bi vàng và 6 viên bi đỏ, các viên bi có cùng kích thước và khối lượng. Bạn Phong lấy ngẫu nhiên một viên bi từ trong hộp, không trả lại. Sau đó bạn Trung lấy ngẫu nhiên một trong 15 viên bi còn lại. Tính xác suất để Phong lấy được viên bi đỏ và Trung lấy được viên bi vàng.", "options": [{"l": "A", "t": "3/17"}, {"l": "B", "t": "1/2"}, {"l": "C", "t": "1/4"}, {"l": "D", "t": "2/5"}], "correct": "C", "expl": "P(A)=6/16=3/8 (A: Phong lấy bi đỏ). P(B|A)=10/15=2/3 (B: Trung lấy bi vàng). P(AB)=3/8×2/3=1/4."}, {"id": 9, "content": "Một nhóm học sinh có 20 học sinh, trong đó có 12 em thích học môn Toán, 10 em thích học môn Văn, 2 em không thích học cả hai môn Toán và Văn. Chọn ngẫu nhiên 1 học sinh, xác suất để học sinh đó thích học môn Toán biết rằng học sinh đó thích học môn Văn là", "options": [{"l": "A", "t": "1/5"}, {"l": "B", "t": "3/10"}, {"l": "C", "t": "3/5"}, {"l": "D", "t": "2/5"}], "correct": "D", "expl": "P(A)=3/5, P(B)=1/2, P(ĀB̄)=1/10 ⇒ P(A∪B)=9/10 ⇒ P(AB)=3/5+1/2−9/10=1/5. P(A|B)=1/5:1/2=2/5."}, {"id": 10, "content": "Một hộp gồm một số viên bi cùng loại, chỉ khác màu, trong đó có 6 bi xanh, còn lại là bi màu đỏ. Minh lấy ngẫu nhiên 1 viên bi trong hộp (không bỏ lại), sau đó Minh lại lấy ngẫu nhiên tiếp 1 viên bi trong hộp. Biết xác suất để Minh lấy được cả hai viên bi màu xanh là 5/7. Hỏi ban đầu trong túi có số viên bi đỏ là bao nhiêu?", "options": [{"l": "A", "t": "1"}, {"l": "B", "t": "2"}, {"l": "C", "t": "3"}, {"l": "D", "t": "4"}], "correct": "A", "expl": "Gọi n là tổng số bi. (6/n)×(5/(n−1))=5/7 ⇒ n=7. Số bi đỏ ban đầu = 7−6=1."}, {"id": 11, "content": "Bạn Tuấn hằng ngày ăn sáng bằng xôi hoặc bún. Nếu hôm nay bạn ăn sáng bằng xôi thì xác suất để hôm sau bạn ăn sáng bằng bún là 0,7. Xét một tuần mà thứ ba bạn ăn sáng bằng xôi. Biết xác suất để thứ năm tuần đó, bạn Tuấn ăn sáng bằng bún là 0,63. Hỏi nếu hôm nay bạn ăn sáng bằng bún thì xác suất để hôm sau bạn ăn sáng bằng xôi là", "options": [{"l": "A", "t": "0,1"}, {"l": "B", "t": "0,2"}, {"l": "C", "t": "0,3"}, {"l": "D", "t": "0,4"}], "correct": "D", "expl": "P(A)=0,7 (thứ tư ăn xôi ⇒ Ā là ăn bún: P(Ā)=0,3). P(B|Ā)=0,7 (B: thứ năm ăn bún). Đặt x là xác suất chuyển từ bún→xôi: P(B|A)=1−x. Xác suất toàn phần: 0,63=0,7(1−x)+0,3·0,7 ⇒ x=0,4."}, {"id": 12, "content": "Giả sử có một loại bệnh mà tỉ lệ người mắc bệnh là 0,1%. Giả sử có một loại xét nghiệm, mà ai mắc bệnh khi xét nghiệm thì có 95% phản ứng dương tính, nhưng tỉ lệ phản ứng dương tính giả là 8% (trong số người không bị bệnh có 8% có phản ứng dương tính). Biết khi một người xét nghiệm có phản ứng dương tính thì khả năng mắc bệnh của người đó là a%. Hỏi a gần số nào nhất?", "options": [{"l": "A", "t": "1,07"}, {"l": "B", "t": "1,12"}, {"l": "C", "t": "1,17"}, {"l": "D", "t": "1,22"}], "correct": "C", "expl": "P(Ā)=0,999 (không bệnh), P(B|Ā)=0,08, P(B|A)=0,95. Theo Bayes: P(A|B)=(0,001×0,95)/(0,001×0,95+0,999×0,08)=95/8087≈1,17%."}], "part2": [{"id": 1, "content": "Cho hai biến cố A và B là hai biến cố độc lập, với P(Ā) = 0,4 và P(B) = 0,7.", "statements": [{"text": "P(A) = 0,6.", "correct": true, "expl": "P(A)=1−P(Ā)=1−0,4=0,6."}, {"text": "P(A|B̄) = 0,7.", "correct": false, "expl": "A và B̄ độc lập nên P(A|B̄)=P(A)=0,6 ≠ 0,7."}, {"text": "P(Ā|B) = 0,4.", "correct": true, "expl": "Ā và B độc lập nên P(Ā|B)=P(Ā)=0,4."}, {"text": "P(B̄|Ā) = 0,6.", "correct": false, "expl": "B̄ và Ā độc lập nên P(B̄|Ā)=P(B̄)=0,3 ≠ 0,6."}]}, {"id": 2, "content": "Một hộp có 10 bi xanh và 8 bi đen, các viên bi đều có cùng hình dáng, kích thước và khối lượng. Bạn Nam lấy ngẫu nhiên một viên trong hộp, không trả lại. Sau đó Bạn Lan lấy ngẫu nhiên một trong 17 viên bi còn lại. Gọi A là biến cố bạn Nam lấy được một viên bi xanh và B là biến cố bạn Lan lấy được một viên bi đen.", "statements": [{"text": "n(A) = 10.", "correct": true, "expl": "Hộp có 10 bi xanh nên số phần tử của A là n(A)=10."}, {"text": "P(A) = 5/9.", "correct": true, "expl": "n(Ω)=18. P(A)=10/18=5/9."}, {"text": "P(B|A) = 4/9.", "correct": false, "expl": "Nếu A xảy ra, còn 17 viên với 8 bi đen: P(B|A)=8/17 ≠ 4/9."}, {"text": "P(A.B) = 0,8.", "correct": false, "expl": "P(AB)=P(A).P(B|A)=(5/9)×(8/17)=40/153≈0,3 ≠ 0,8."}]}, {"id": 3, "content": "Một cửa hàng bán hai loại bóng đèn, trong đó có 65% bóng đèn là màu trắng và 35% bóng đèn là màu đỏ, các bóng đèn có kích thước như nhau. Các bóng đèn màu trắng có tỉ lệ hỏng là 2% và các bóng đèn màu đỏ có tỉ lệ hỏng là 3%. Một khách hàng chọn mua ngẫu nhiên 1 bóng đèn từ cửa hàng đó. Xét các biến cố: A: “Khách hàng chọn được bóng màu trắng”; B: “Khách hàng chọn được bóng không hỏng”.", "statements": [{"text": "P(Ā) = 0,65.", "correct": false, "expl": "P(A)=0,65 nên P(Ā)=0,35 ≠ 0,65."}, {"text": "P(B|A) = 0,02.", "correct": false, "expl": "Bóng trắng hỏng 2% nên P(B̄|A)=0,02, suy ra P(B|A)=1−0,02=0,98 ≠ 0,02."}, {"text": "P(B|Ā) = 0,3.", "correct": false, "expl": "Bóng đỏ hỏng 3% nên P(B̄|Ā)=0,03, suy ra P(B|Ā)=1−0,03=0,97 ≠ 0,3."}, {"text": "P(B) = 0,9765.", "correct": true, "expl": "P(B)=P(A).P(B|A)+P(Ā).P(B|Ā)=0,65×0,98+0,35×0,97=0,9765."}]}, {"id": 4, "content": "Một kho hàng chứa 85% sản phẩm loại I và 15% sản phẩm loại II, trong đó có 1% sản phẩm loại I bị hỏng, 4% sản phẩm loại II bị hỏng. Các sản phẩm có kích thước và hình dạng như nhau. Một khách hàng chọn ngẫu nhiên 1 sản phẩm. Xét các biến cố: A: “Khách hàng chọn được sản phẩm loại I”; B: “Khách hàng chọn được sản phẩm không bị hỏng”.", "statements": [{"text": "P(A) = 0,85.", "correct": true, "expl": "Theo đề bài, P(A)=0,85."}, {"text": "P(B|A) = 0,99.", "correct": true, "expl": "Loại I hỏng 1% nên P(B̄|A)=0,01, suy ra P(B|A)=0,99."}, {"text": "P(B) = 0,9855.", "correct": true, "expl": "P(B)=P(A).P(B|A)+P(Ā).P(B|Ā)=0,85×0,99+0,15×0,96=0,9855."}, {"text": "P(A|B) = 0,95.", "correct": false, "expl": "P(A|B)=P(A).P(B|A)/P(B)=(0,85×0,99)/0,9855≈0,854 ≠ 0,95."}]}], "part3": [{"id": 1, "content": "Cho hai biến cố A, B thỏa mãn P(A) = 0,21; P(B) = 0,52; P(B|A) = 0,6. Khi đó P(A|B) = a/b với a/b là phân số tối giản, giá trị của D = a + b là bao nhiêu?", "answer": 323, "expl": "P(AB)=P(A).P(B|A)=0,21×0,6=0,126. P(A|B)=P(AB)/P(B)=0,126/0,52=63/260. a=63, b=260 ⇒ D=323."}, {"id": 2, "content": "Một hộp có 20 viên bi trắng và 10 viên bi đen, các viên bi có cùng kích thước và khối lượng. Bạn Bình lấy ngẫu nhiên một viên bi trong hộp, không trả lại. Sau đó bạn An lấy ngẫu nhiên một viên bi trong hộp đó. Gọi A là biến cố: “An lấy được viên bi trắng”; B là biến cố: “Bình lấy được viên bi trắng”. Khi đó P(A|B̄) = a/b, với phân số a/b là tối giản. Tính giá trị của C = a − b.", "answer": -9, "expl": "n(Ω)=30×29. n(B̄)=10×29 (Bình lấy đen). n(AB̄)=10×20 (Bình đen, An trắng). P(A|B̄)=n(AB̄)/n(B̄)=(10×20)/(10×29)=20/29. a=20, b=29 ⇒ C=−9."}, {"id": 3, "content": "Lớp 11A1 của một trường THPT A có 20% học sinh tham gia Câu lạc bộ Tiếng Anh của trường, trong số đó có 85% học sinh có chứng chỉ IELTS từ 5.5 điểm trở lên. Ngoài ra trong lớp có 10% học sinh không tham gia Câu lạc bộ Tiếng Anh cũng có chứng chỉ IELTS từ 5.5 trở lên. Chọn ngẫu nhiên một học sinh của lớp 11A1. Tính xác suất để chọn được một học sinh có chứng chỉ IELTS từ 5.5 trở lên.", "answer": 0.25, "expl": "P(A)=0,2; P(Ā)=0,8; P(B|A)=0,85; P(B|Ā)=0,1. P(B)=0,2×0,85+0,8×0,1=0,25."}, {"id": 4, "content": "Một kho hàng có 85% sản phẩm loại I và 15% sản phẩm loại II, trong đó có 99% sản phẩm loại I chất lượng tốt, 96% sản phẩm loại II chất lượng tốt. Các sản phẩm có kích thước và hình dạng như nhau. Một khách hàng chọn ngẫu nhiên 1 sản phẩm. Tính xác suất để khách hàng chọn được sản phẩm loại I và có chất lượng tốt (làm tròn kết quả đến hàng phần trăm).", "answer": 0.84, "expl": "Gọi A: chọn SP loại I, B: chọn SP tốt. Xác suất cần tìm là P(A∩B)=P(A).P(B|A)=0,85×0,99=0,8415≈0,84."}, {"id": 5, "content": "Trong một kì thi Tốt nghiệp trung học phổ thông, một trường X có 60% học sinh lựa chọn tổ hợp D00 (gồm các môn Toán, Văn, Ngoại ngữ). Biết rằng, nếu một học sinh chọn tổ hợp D00 thì xác suất để học sinh đó đỗ Đại học là 0,7; còn nếu một học sinh không chọn tổ hợp D00 thì xác suất để học sinh đó đỗ Đại học là 0,5. Chọn ngẫu nhiên một học sinh của trường X đã Tốt nghiệp trung học phổ thông trong kì thi trên. Biết rằng học sinh này đã đỗ Đại học. Tính xác suất để học sinh đó chọn tổ hợp D00 (làm tròn kết quả đến hàng phần trăm).", "answer": 0.68, "expl": "P(A)=0,6; P(Ā)=0,4; P(B|A)=0,7; P(B|Ā)=0,5. Theo Bayes: P(A|B)=(0,6×0,7)/(0,6×0,7+0,4×0,5)≈0,68."}, {"id": 6, "content": "Một cuộc thi có 36 bộ câu hỏi, trong đó có 16 bộ câu hỏi về chủ đề tự nhiên và 20 bộ câu hỏi về chủ đề xã hội. Bạn Hạnh lấy ngẫu nhiên 1 bộ câu hỏi (lấy không hoàn lại), sau đó bạn Phúc lấy ngẫu nhiên 1 bộ câu hỏi. Xác suất bạn Phúc lấy được bộ câu hỏi về chủ đề tự nhiên bằng a/b với a/b là phân số tối giản. Giá trị 100a − 99b bằng bao nhiêu?", "answer": -491, "expl": "Gọi A: Hạnh lấy bộ xã hội, B: Phúc lấy bộ tự nhiên. P(A)=20/36=5/9, P(Ā)=4/9. P(B|A)=16/35, P(B|Ā)=15/35. P(B)=(5/9)(16/35)+(4/9)(15/35)=4/9. a=4, b=9 ⇒ 100a−99b=400−891=−491."}]};
+
+const EXAM_TIME = 90*60;
+let answers1 = {}, answers2 = {}, answers3 = {};
+let timeLeft = EXAM_TIME, timerInt = null, studentName = "";
+
+/* ================= LANDING ================= */
+document.getElementById("start-btn").addEventListener("click", ()=>{
+  const nameInput=document.getElementById("student-name");
+  const name=nameInput.value.trim();
+  if(!name){
+    nameInput.classList.add("error");
+    document.getElementById("name-error").classList.add("show");
+    nameInput.focus();
+    return;
+  }
+  nameInput.classList.remove("error");
+  document.getElementById("name-error").classList.remove("show");
+  studentName=name;
+  startExam();
+});
+document.getElementById("student-name").addEventListener("input", function(){
+  if(this.value.trim()){
+    this.classList.remove("error");
+    document.getElementById("name-error").classList.remove("show");
+  }
+});
+
+function startExam(){
+  EXAM.part1.forEach(q=> answers1[q.id]=null);
+  EXAM.part2.forEach(q=> answers2[q.id]=[null,null,null,null]);
+  EXAM.part3.forEach(q=> answers3[q.id]="");
+  timeLeft = EXAM_TIME;
+  document.getElementById("screen-landing").classList.add("hidden");
+  document.getElementById("screen-quiz").classList.remove("hidden");
+  renderQuiz();
+  startTimer();
+  document.querySelectorAll(".jumpnav button").forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+      document.getElementById(btn.dataset.jump).scrollIntoView({behavior:"smooth", block:"start"});
+    });
+  });
+}
+
+/* ================= TIMER ================= */
+function startTimer(){
+  updateTimerDisplay();
+  timerInt=setInterval(()=>{
+    timeLeft--;
+    updateTimerDisplay();
+    if(timeLeft<=0){ clearInterval(timerInt); submitExam(true); }
+  },1000);
+}
+function updateTimerDisplay(){
+  const m=Math.floor(timeLeft/60), s=timeLeft%60;
+  const el=document.getElementById("timer");
+  el.textContent="⏱ "+String(m).padStart(2,"0")+":"+String(s).padStart(2,"0");
+  el.classList.toggle("low", timeLeft<=300);
+}
+
+/* ================= RENDER QUIZ ================= */
+function updateProgress(){
+  let done=0;
+  EXAM.part1.forEach(q=>{ if(answers1[q.id]!==null) done++; });
+  EXAM.part2.forEach(q=>{ if(answers2[q.id].every(a=>a!==null)) done++; });
+  EXAM.part3.forEach(q=>{ if(answers3[q.id].trim()!=="") done++; });
+  document.getElementById("progress-text").textContent = done+"/22 đã trả lời";
+}
+
+function renderQuiz(){
+  const body=document.getElementById("quiz-body");
+  let html = "";
+
+  html += `<div class="part-header" id="part1-header">Phần 1. Câu hỏi trắc nghiệm nhiều phương án lựa chọn
+    <div class="part-note">Mỗi câu hỏi, thí sinh chỉ chọn 1 phương án đúng nhất.</div></div>`;
+  EXAM.part1.forEach((q,i)=>{
+    html += `<div class="card" data-q1="${q.id}">
+      <span class="q-tag">Câu ${i+1}</span>
+      <div class="q-content">${q.content}</div>
+      <div class="mc-options">`;
+    q.options.forEach(opt=>{
+      html += `<div class="mc-option" data-p1="${q.id}" data-opt="${opt.l}">
+        <span class="opt-label">${opt.l}.</span><span>${opt.t}</span></div>`;
+    });
+    html += `</div></div>`;
+  });
+
+  html += `<div class="part-header" id="part2-header">Phần 2. Câu hỏi trắc nghiệm Đúng/Sai
+    <div class="part-note">Trong mỗi ý a), b), c), d) ở mỗi câu, thí sinh chọn Đúng hoặc Sai.</div></div>`;
+  EXAM.part2.forEach((q,i)=>{
+    html += `<div class="card" data-q2="${q.id}">
+      <span class="q-tag">Câu ${i+1}</span>
+      <div class="q-content">${q.content}</div>`;
+    const labels=["a","b","c","d"];
+    q.statements.forEach((st,si)=>{
+      html += `<div class="statement">
+        <div class="st-text"><span class="st-label">${labels[si]})</span>${st.text}</div>
+        <div class="toggle">
+          <button data-p2="${q.id}" data-si="${si}" data-val="true">Đúng</button>
+          <button data-p2="${q.id}" data-si="${si}" data-val="false">Sai</button>
+        </div></div>`;
+    });
+    html += `</div>`;
+  });
+
+  html += `<div class="part-header" id="part3-header">Phần 3. Câu hỏi trắc nghiệm trả lời ngắn
+    <div class="part-note">Điền đáp án là một số (số nguyên hoặc số thập phân, có thể âm).</div></div>`;
+  EXAM.part3.forEach((q,i)=>{
+    html += `<div class="card" data-q3="${q.id}">
+      <span class="q-tag">Câu ${i+1}</span>
+      <div class="q-content">${q.content}</div>
+      <div class="short-answer">
+        <input type="text" inputmode="decimal" data-p3="${q.id}" placeholder="Nhập đáp án...">
+        <div class="hint">Có thể dùng dấu chấm hoặc dấu phẩy cho số thập phân, ví dụ: 0.25 hoặc 0,25</div>
+      </div></div>`;
+  });
+
+  body.innerHTML = html;
+
+  body.querySelectorAll(".mc-option").forEach(el=>{
+    el.addEventListener("click", ()=>{
+      const qid=el.dataset.p1, opt=el.dataset.opt;
+      answers1[qid]=opt;
+      body.querySelectorAll(`.mc-option[data-p1="${qid}"]`).forEach(o=> o.classList.toggle("selected", o.dataset.opt===opt));
+      updateProgress();
+    });
+  });
+  body.querySelectorAll(".toggle button").forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+      const qid=btn.dataset.p2, si=+btn.dataset.si, val=btn.dataset.val==="true";
+      answers2[qid][si]=val;
+      const group = body.querySelectorAll(`.toggle button[data-p2="${qid}"][data-si="${si}"]`);
+      group.forEach(b=>{
+        b.classList.remove("sel-true","sel-false");
+        if(b.dataset.val==="true" && val) b.classList.add("sel-true");
+        if(b.dataset.val==="false" && !val) b.classList.add("sel-false");
+      });
+      updateProgress();
+    });
+  });
+  body.querySelectorAll('input[data-p3]').forEach(inp=>{
+    inp.addEventListener("input", ()=>{
+      answers3[inp.dataset.p3]=inp.value;
+      updateProgress();
+    });
+  });
+
+  updateProgress();
+}
+
+document.getElementById("submit-btn").addEventListener("click", ()=>{
+  let done=0;
+  EXAM.part1.forEach(q=>{ if(answers1[q.id]!==null) done++; });
+  EXAM.part2.forEach(q=>{ if(answers2[q.id].every(a=>a!==null)) done++; });
+  EXAM.part3.forEach(q=>{ if(answers3[q.id].trim()!=="") done++; });
+  const unanswered = 22-done;
+  let msg="Bạn có chắc chắn muốn nộp bài?";
+  if(unanswered>0) msg=`Còn ${unanswered} câu chưa trả lời đầy đủ. Bạn vẫn muốn nộp bài?`;
+  if(confirm(msg)) submitExam(false);
+});
+
+/* ================= SCORING ================= */
+function ratioForCount(n){
+  if(n===4) return 1.0; if(n===3) return 0.5; if(n===2) return 0.25; if(n===1) return 0.1; return 0;
+}
+function parseNum(str){
+  if(str===undefined || str===null) return null;
+  const s = str.trim().replace(",", ".");
+  if(s==="") return null;
+  const v = parseFloat(s);
+  return isNaN(v) ? null : v;
+}
+
+function submitExam(auto){
+  clearInterval(timerInt);
+
+  let score1=0, correct1=0;
+  const detail1=[];
+  EXAM.part1.forEach(q=>{
+    const ok = answers1[q.id]===q.correct;
+    if(ok){ score1+=0.25; correct1++; }
+    detail1.push({q, userAns:answers1[q.id], ok});
+  });
+
+  let score2=0;
+  const detail2=[];
+  EXAM.part2.forEach(q=>{
+    let cnt=0;
+    q.statements.forEach((st,si)=>{ if(answers2[q.id][si]===st.correct) cnt++; });
+    const pts = ratioForCount(cnt);
+    score2+=pts;
+    detail2.push({q, userAns:answers2[q.id], correctCount:cnt, pts});
+  });
+
+  let score3=0, correct3=0;
+  const detail3=[];
+  EXAM.part3.forEach(q=>{
+    const userVal = parseNum(answers3[q.id]);
+    const ok = userVal!==null && Math.abs(userVal - q.answer) < 0.006;
+    if(ok){ score3+=0.5; correct3++; }
+    detail3.push({q, userAns:answers3[q.id], ok});
+  });
+
+  const total = score1+score2+score3;
+
+  document.getElementById("screen-quiz").classList.add("hidden");
+  document.getElementById("screen-results").classList.remove("hidden");
+  document.getElementById("score-total").textContent=total.toFixed(2);
+  document.getElementById("score-name").textContent=studentName;
+  document.getElementById("score-breakdown").innerHTML =
+    `<span>Phần 1: ${score1.toFixed(2)}đ (${correct1}/12 câu)</span>`+
+    `<span>Phần 2: ${score2.toFixed(2)}đ</span>`+
+    `<span>Phần 3: ${score3.toFixed(2)}đ (${correct3}/6 câu)</span>`;
+  document.getElementById("score-sub").textContent = auto ? "Hết giờ — bài tự động nộp" : "Đã nộp bài thành công";
+  document.getElementById("rank-link").href = RANKING_SHEET_URL;
+
+  renderReview(detail1, detail2, detail3);
+  saveScoreToRanking(total, correct1, detail2, correct3);
+  window.scrollTo({top:0, behavior:"smooth"});
+}
+
+/* ================= LƯU VÀO GOOGLE SHEET ================= */
+function saveScoreToRanking(total, correct1, detail2, correct3){
+  const statusEl=document.getElementById("save-status");
+  if(!GOOGLE_FORM_ACTION_URL || GOOGLE_FORM_ACTION_URL.indexOf("PASTE_")===0){
+    statusEl.textContent="⚠ Chưa thiết lập bảng xếp hạng (xem hướng dẫn cho giáo viên).";
+    return;
+  }
+  const p2Text = detail2.map(d=>d.correctCount+"/4").join(" | ");
+  const detailText = `Đề chương 6 · P1 đúng: ${correct1}/12 · P2 (đúng ý/4): ${p2Text} · P3 đúng: ${correct3}/6`;
+  const body = new URLSearchParams();
+  body.append(ENTRY_NAME, studentName);
+  body.append(ENTRY_SCORE, total.toFixed(2));
+  if(ENTRY_DETAIL && ENTRY_DETAIL.indexOf("PASTE_")!==0) body.append(ENTRY_DETAIL, detailText);
+  fetch(GOOGLE_FORM_ACTION_URL, {
+    method:"POST", mode:"no-cors",
+    headers:{"Content-Type":"application/x-www-form-urlencoded"},
+    body: body.toString()
+  }).then(()=>{ statusEl.textContent="✓ Đã lưu điểm vào bảng xếp hạng."; })
+    .catch(()=>{ statusEl.textContent="⚠ Không lưu được điểm (kiểm tra kết nối mạng)."; });
+}
+
+/* ================= REVIEW ================= */
+function renderReview(detail1, detail2, detail3){
+  const box=document.getElementById("review-list");
+  let html = `<div class="part-header">Phần 1 — Chi tiết bài làm</div>`;
+  detail1.forEach((d,i)=>{
+    const q=d.q;
+    html += `<div class="card review-q">
+      <div class="review-head"><span class="q-tag" style="margin-bottom:0;">Câu ${i+1}</span>
+      <span class="qscore">${d.ok? '+0,25 đ':'0 đ'}</span></div>
+      <div class="q-content">${q.content}</div>`;
+    q.options.forEach(opt=>{
+      let cls="review-mc-opt";
+      if(opt.l===q.correct) cls+=" correct-ans";
+      else if(opt.l===d.userAns) cls+=" wrong-selected";
+      html += `<div class="${cls}">${opt.l}. ${opt.t}${opt.l===q.correct?' ✓ (đáp án đúng)':''}${(opt.l===d.userAns && opt.l!==q.correct)?' ✕ (bạn đã chọn)':''}</div>`;
+    });
+    html += `<div class="review-body"><div class="expl">${q.expl}</div></div></div>`;
+  });
+
+  html += `<div class="part-header">Phần 2 — Chi tiết bài làm</div>`;
+  const labels=["a","b","c","d"];
+  detail2.forEach((d,i)=>{
+    const q=d.q;
+    html += `<div class="card review-q">
+      <div class="review-head"><span class="q-tag" style="margin-bottom:0;">Câu ${i+1}</span>
+      <span class="qscore">${d.correctCount}/4 ý đúng · ${d.pts.toFixed(2)} đ</span></div>
+      <div class="q-content">${q.content}</div>`;
+    q.statements.forEach((st,si)=>{
+      const userVal=d.userAns[si];
+      const isOk=userVal===st.correct;
+      const userTxt = userVal===null ? "chưa chọn" : (userVal? "Đúng":"Sai");
+      const correctTxt = st.correct? "Đúng":"Sai";
+      html += `<div class="statement" style="border-top:1px dashed var(--paper-line);">
+        <div class="mark ${isOk?'ok':'no'}" style="margin-right:8px;">${isOk?'✓':'✕'}</div>
+        <div class="review-body" style="flex:1;">
+          <div class="st-text"><span class="st-label">${labels[si]})</span>${st.text}</div>
+          <div class="meta">Bạn chọn: <b>${userTxt}</b> &nbsp;·&nbsp; Đáp án đúng: <b>${correctTxt}</b></div>
+          <div class="expl">${st.expl}</div>
+        </div></div>`;
+    });
+    html += `</div>`;
+  });
+
+  html += `<div class="part-header">Phần 3 — Chi tiết bài làm</div>`;
+  detail3.forEach((d,i)=>{
+    const q=d.q;
+    html += `<div class="card review-q">
+      <div class="review-head"><span class="q-tag" style="margin-bottom:0;">Câu ${i+1}</span>
+      <span class="qscore">${d.ok? '+0,5 đ':'0 đ'}</span></div>
+      <div class="q-content">${q.content}</div>
+      <div class="meta">Bạn trả lời: <b>${d.userAns.trim()===""?"chưa trả lời":d.userAns}</b> &nbsp;·&nbsp; Đáp án đúng: <b>${q.answer}</b></div>
+      <div class="expl" style="margin-top:8px;">${q.expl}</div>
+    </div>`;
+  });
+
+  box.innerHTML = html;
+}
+</script>
+</body>
+</html>
